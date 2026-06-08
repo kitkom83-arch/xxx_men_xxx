@@ -4,9 +4,14 @@ export default function DashboardHome({ setup, admin }) {
   return (
     <ProtectedLayout
       title="Dashboard"
+      titleTh="แดชบอร์ด"
+      titleEn="Dashboard"
       description="ภาพรวมระบบในโหมดปลอดภัย (read-only + dry-run)"
+      descriptionTh="ดูสถานะระบบ โหมดการทำงาน การใช้งาน API และความปลอดภัยโดยรวม"
+      descriptionEn="View system status, operation mode, API usage, and overall safety state"
       admin={admin}
       mode={setup?.mode || 'mock'}
+      featureStatus="demo"
     >
       <h2>Dashboard Overview</h2>
       <p>หน้านี้พร้อมใช้งานแล้ว และไม่เรียก write action จริง</p>

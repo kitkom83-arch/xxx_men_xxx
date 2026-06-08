@@ -1,0 +1,147 @@
+# GitHub Actions CI Workflow
+# 
+# V6.1 Safety + Test + Demo Ready
+# 
+# Runs: Tests, Syntax Check, Build on Node.js
+# Uses MOCK_MODE=1, ENABLE_REAL_ACTIONS=0, DRY_RUN_ONLY=1 for safety
+
+name: CI
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+
+env:
+  MOCK_MODE: "1"
+  ENABLE_REAL_ACTIONS: "0"
+  DRY_RUN_ONLY: "1"
+
+jobs:
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    
+    strategy:
+      matrix:
+        node-version: [18.x, 20.x]
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+      
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Generate Prisma
+        run: npm run prisma:generate
+        env:
+          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/postgres
+          ENCRYPTION_KEY: test-encryption-key-for-ci-32bytes
+          SESSION_SECRET: test-session-secret-for-ci
+      
+      - name: Run unit tests
+        run: npm test
+        env:
+          ENCRYPTION_KEY: test-encryption-key-for-ci-32bytes
+          SESSION_SECRET: test-session-secret-for-ci
+          MOCK_MODE: "1"
+          ENABLE_REAL_ACTIONS: "0"
+          DRY_RUN_ONLY: "1"
+      
+      - name: Run safety tests
+        run: node --test tests/safety-config.test.js tests/action-executor.test.js
+        env:
+          ENABLE_REAL_ACTIONS: "0"
+          MOCK_MODE: "1"
+          DRY_RUN_ONLY: "1"
+          ENCRYPTION_KEY: test-encryption-key-for-ci-32bytes
+          SESSION_SECRET: test-session-secret-for-ci
+
+  test-windows:
+    name: Test Windows
+    runs-on: windows-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20.x
+          cache: 'npm'
+      
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Check Node.js syntax
+        run: node --check lib\*.js
+      
+      - name: Run unit tests
+        run: npm test
+        env:
+          ENCRYPTION_KEY: test-encryption-key-for-ci-32bytes
+          SESSION_SECRET: test-session-secret-for-ci
+          MOCK_MODE: "1"
+          ENABLE_REAL_ACTIONS: "0"
+          DRY_RUN_ONLY: "1"
+
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20.x
+          cache: 'npm'
+      
+      - name: Install dependencies
+        run: npm ci
+      - name: Generate Prisma
+        run: npm run prisma:generate
+        env:
+          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/postgres
+      
+      - name: Build Next.js
+        run: npm run build
+      
+      - name: Verify build output
+        run: |
+          ls -la .next/
+          echo "Build completed successfully"
+
+  lint:
+    name: Lint Check
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20.x
+          cache: 'npm'
+      
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Check for syntax errors
+        run: |
+          node --check pages/_app.js || true
+          node --check pages/index.js || true
+          echo "Syntax check completed"

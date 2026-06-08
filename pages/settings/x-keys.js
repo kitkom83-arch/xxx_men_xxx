@@ -19,9 +19,14 @@ export default function XKeysSettings({ setup, admin }) {
   return (
     <ProtectedLayout
       title="Settings / X Keys"
+      titleTh="คีย์ X API"
+      titleEn="X API Keys"
       description="แสดงเฉพาะ metadata แบบ masked เท่านั้น"
+      descriptionTh="ตั้งค่าและทดสอบ X API key/token โดยระบบจะแสดงเฉพาะข้อมูลแบบปิดบัง"
+      descriptionEn="Configure and test X API keys/tokens while showing masked metadata only"
       admin={admin}
       mode={setup?.mode || 'mock'}
+      featureStatus="protected"
     >
       <h2>X Keys (Masked Metadata)</h2>
       <p>ไม่มีการแสดง token/key แบบเต็มในหน้า HTML</p>

@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic';
+
 export default function Custom404() {
   return (
     <main style={{
@@ -22,4 +24,9 @@ export default function Custom404() {
       </section>
     </main>
   );
+}
+
+// Force non-static rendering
+export async function getServerSideProps() {
+  return { props: {} };
 }

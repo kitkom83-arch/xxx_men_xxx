@@ -12,9 +12,14 @@ export default function DashboardComposer({ setup, admin }) {
   return (
     <ProtectedLayout
       title="Dashboard / Composer"
+      titleTh="ตัวช่วยร่างโพสต์"
+      titleEn="Composer"
       description="Composer หน้านี้บังคับ dry-run only"
+      descriptionTh="เขียน ตรวจตัวอักษร พรีวิว และทดสอบโพสต์แบบ dry-run โดยไม่โพสต์จริง"
+      descriptionEn="Draft, count characters, preview, and dry-run posts without publishing anything"
       admin={admin}
       mode={setup?.mode || 'mock'}
+      featureStatus="dry-run"
     >
       <h2>Composer (Dry-run only)</h2>
       <p className="warning">ห้าม post จริง: ปุ่มนี้ทำได้เฉพาะ dry-run</p>

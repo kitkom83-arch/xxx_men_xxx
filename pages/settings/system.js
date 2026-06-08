@@ -4,9 +4,14 @@ export default function SystemSettings({ setup, admin }) {
   return (
     <ProtectedLayout
       title="Settings / System"
+      titleTh="ตั้งค่าระบบ"
+      titleEn="System Settings"
       description="หน้าตั้งค่าระบบแบบ minimal สำหรับ route coverage"
+      descriptionTh="ตรวจโหมดระบบ ความปลอดภัย การตั้งค่า session และค่าเริ่มต้นของระบบ"
+      descriptionEn="Check system mode, safety settings, session configuration, and defaults"
       admin={admin}
       mode={setup?.mode || 'mock'}
+      featureStatus="protected"
     >
       <h2>System Settings</h2>
       <ul className="checklist">

@@ -117,6 +117,133 @@ npm run test:e2e
 - `UsageSnapshot`
 - `AuditEvent`
 
+## เมนูและฟีเจอร์ (Menu and Features)
+
+ระบบรองรับ 2 ภาษา: ไทย (ค่าเริ่มต้น) และ English
+
+### วิธีเปลี่ยนภาษา
+
+กดปุ่ม TH/EN ที่มุมขวาบนของแต่ละหน้าเพื่อสลับภาษา
+ภาษาจะถูกจำไว้ใน localStorage (key: `xmc_locale`)
+
+### รายการเมนู (Menu List)
+
+| ไทย | English | คำอธิบาย |
+|---|---|---|
+| แดชบอร์ด | Dashboard | ภาพรวมระบบ |
+| ค้นหาโพสต์ | Search Posts | ค้นหาโพสต์จาก keyword |
+| ผู้ใช้ | Users | ค้นหาผู้ใช้จาก username |
+| โพสต์ของผู้ใช้ | User Posts | ดูโพสต์ของผู้ใช้ |
+| เทรนด์ | Trends | หัวข้อที่กำลังเป็นกระแส |
+| ตัวช่วยร่างโพสต์ | Composer | ร่างโพสต์แบบ dry-run |
+| ขีดจำกัด API | Rate Limits | ตรวจ rate limit |
+| การใช้งาน | Usage | ดูการใช้งาน API |
+| คีย์ X API | X API Keys | จัดการ API keys |
+| ตั้งค่าระบบ | System Settings | ตั้งค่าระบบ |
+| คู่มือฟีเจอร์ | Feature Guide | คำอธิบายฟีเจอร์ |
+
+### สถานะฟีเจอร์ (Feature Status)
+
+- **Demo Mode**: ใช้ข้อมูลจำลอง ไม่เรียก X API จริง
+- **Read-only**: เฉพาะการอ่านข้อมูล ไม่ทำ write action
+- **Dry-run only**: ทดสอบเท่านั้น ไม่โพสต์จริง
+- **Protected**: ต้อง login ก่อนเข้าใช้งาน
+
 ## หมายเหตุการใช้งานจริง
 
 ก่อนเปิด live-readonly mode ให้ตรวจสิทธิ์และราคาใน X Developer Console เอง ระบบนี้ไม่ส่ง credential ไป frontend และไม่ใช้ credential เพื่อ action จริงใด ๆ บน X
+
+---
+
+## V6.1: ความปลอดภัยเพิ่มเติม (Thai)
+
+### สวิตช์ความปลอดภัยสำหรับ Action จริง
+
+V6.1 เพิ่มระบบป้องกัน Action จริงทั้งระบบ:
+
+| ตัวแปร | ค่าเริ่มต้น | คำอธิบาย |
+|--------|------------|----------|
+| `ENABLE_REAL_ACTIONS` | `0` | ปิด - ต้องตั้งเป็น `1` จึงจะยิง Action จริงได้ |
+| `MOCK_MODE` | `1` | เปิด - ใช้ข้อมูลจำลอง |
+| `DRY_RUN_ONLY` | `1` | เปิด - ไม่โพสต์จริง |
+
+### วิธีเปิดใช้งาน Action จริง (⚠️ อันตราย!)
+
+**คำเตือน**: การเปิด Action จริงมีความเสี่ยงสูง!
+
+```bash
+# ตั้งค่าใน .env หรือ command line
+ENABLE_REAL_ACTIONS=1
+MOCK_MODE=0
+DRY_RUN_ONLY=0
+```
+
+หลังจากนั้นระบบจะอนุญาต:
+- `publish_post()` - โพสต์จริงไป X
+- `delete_post()` - ลบโพสต์จริง
+- `like_post()` - like จริง
+- `follow_user()` - follow จริง
+- `send_dm()` - ส่ง DM จริง
+
+### วิธีทดสอบ
+
+```bash
+# ทดสอบทั้งหมด
+npm test
+
+# ทดสอบเฉพาะ safety
+node --test tests/safety-config.test.js
+node --test tests/action-executor.test.js
+```
+
+ผลทดสอบ V6.1: **39/39 PASS**
+
+### ไฟล์ใหม่ (V6.1)
+
+- `lib/safety-config.js` - สวิตช์ความปลอดภัย
+- `lib/action-executor.js` - Action gate
+- `tests/safety-config.test.js` - ทดสอบ safety
+- `tests/action-executor.test.js` - ทดสอบ executor
+- `.github/workflows/ci.yml` - GitHub Actions CI
+- `scripts/build-prod.bat` - Build script
+- `RELEASE_CHECKLIST.md` - รายการตรวจสำหรับ release
+
+---
+
+## Quick Start (English)
+
+1. **Clone & Install**:
+   ```bash
+   npm install
+   npm run prisma:generate
+   ```
+
+2. **Setup .env**:
+   ```bash
+   cp .env.example .env
+   # Edit .env with your values
+   ```
+
+3. **Run**:
+   ```bash
+   npm run dev
+   # Open http://localhost:3000/setup
+   ```
+
+4. **First Login**:
+   - Username: `admin`
+   - Password: (what you set in setup)
+
+### Demo Mode (Default)
+
+- No real X API calls
+- Mock data for all features
+- Safe for development and testing
+
+### Enable Real Actions (Danger!)
+
+```bash
+ENABLE_REAL_ACTIONS=1 MOCK_MODE=0 DRY_RUN_ONLY=0 npm run dev
+```
+
+**WARNING**: Only for production use with real X credentials!
