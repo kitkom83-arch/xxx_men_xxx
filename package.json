@@ -1,0 +1,32 @@
+{
+  "name": "x-api-marketing-control-center",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "prisma:generate": "prisma generate",
+    "prisma:migrate": "prisma migrate dev",
+    "test": "node --test tests/unit.test.js",
+    "test:e2e": "node ./node_modules/@playwright/test/cli.js test",
+    "smoke:full": "node scripts/smoke-full.js",
+    "scan:secrets": "node scripts/scan-secrets.js",
+    "verify:endpoints": "node scripts/verify-endpoints.js",
+    "verify:endpoints:thorough": "node scripts/verify-endpoints-thorough.js",
+    "verify-frontend-routes:thorough": "node scripts/verify-frontend-routes-thorough.js",
+    "verify:frontend": "node scripts/verify-frontend-routes-thorough.js"
+  },
+  "dependencies": {
+    "@prisma/client": "^5.22.0",
+    "next": "^14.0.3",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "axios": "^1.5.0",
+    "dotenv": "^16.3.1"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.48.2",
+    "prisma": "^5.22.0"
+  }
+}

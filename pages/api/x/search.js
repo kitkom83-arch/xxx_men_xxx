@@ -1,0 +1,25 @@
+const { requireAdminApi } = require('../../../lib/apiAuth');
+const { apiError } = require('../../../lib/errors');
+const { searchPosts } = require('../../../lib/xApi');
+
+export default async function handler(req, res) {
+  const auth = await requireAdminApi(req, res);
+  if (!auth) return;
+
+  if (req.method !== 'GET') {
+    return apiError(res, 405);
+  }
+
+  const { query } = req.query;
+  if (!query) {
+    return apiError(res, 400, 'กรุณาระบุคำค้นหา');
+  }
+
+  const result = await searchPosts(query);
+  return res.status(result.ok ? 200 : result.status || 500).json({
+    ok: Boolean(result.ok),
+    data: result.data || null,
+    error: result.error || null,
+    meta: { ...(result.meta || {}), rateLimit: result.rateLimit || null },
+  });
+}

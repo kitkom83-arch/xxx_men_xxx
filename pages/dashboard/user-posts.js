@@ -1,0 +1,24 @@
+import { useState } from 'react';
+import ProtectedLayout from '../../components/ProtectedLayout';
+
+export default function DashboardUserPosts({ setup, admin }) {
+  const [posts] = useState([]);
+
+  return (
+    <ProtectedLayout
+      title="Dashboard / User Posts"
+      description="ดูโพสต์ผู้ใช้ใน mock/demo mode"
+      admin={admin}
+      mode={setup?.mode || 'mock'}
+      empty={posts.length === 0 ? 'ยังไม่มีโพสต์ (empty state)' : ''}
+    >
+      <h2>User Posts</h2>
+      <p>หน้านี้เป็น route placeholder ที่ใช้งานได้จริงและไม่ crash</p>
+    </ProtectedLayout>
+  );
+}
+
+export async function getServerSideProps(context) {
+  const { requirePageSession } = require('../../lib/apiAuth');
+  return requirePageSession(context);
+}

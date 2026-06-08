@@ -1,0 +1,17 @@
+﻿node_modules/
+.next/
+out/
+.env
+.env.*
+!.env.example
+.xmc-data.json
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+playwright-report/
+test-results/
+audit-report.json
+audit-fix-plan.json
+.DS_Store
